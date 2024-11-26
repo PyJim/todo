@@ -1,0 +1,54 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=todo
+    ports:
+      - 5432:5432
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+    ports:
+      - 8000:8000
+    volumes:
+      - static:/static
+      - media:/media
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - DB_HOST=db
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=todo
+      - DEBUG=False
+    command: sh -c "python manage.py migrate && gunicorn todo.wsgi:application --bind 0.0.0.0:8000"
+  
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    ports:
+      - 80:80
+    volumes:
+      - static:/static
+      - media:/media 
+    depends_on:
+      - api
+
+volumes:
+  db_data:
+  static:
+  media:
