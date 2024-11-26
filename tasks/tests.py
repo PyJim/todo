@@ -47,7 +47,8 @@ class TaskViewSetTestCase(APITestCase):
     def test_update_task(self):
         """Test PUT /tasks/<id>/ to update an existing task"""
         updated_data = {'title': 'Updated Task', 'description': 'Updated task description'}
-        response = self.client.put(reverse('task', kwargs={'pk': self.task.pk}), updated_data, format='json')
+        url = reverse('task', kwargs={'pk': self.task.pk})
+        response = self.client.put(url, updated_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['title'], updated_data['title'])
         self.assertEqual(response.data['description'], updated_data['description'])
