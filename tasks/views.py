@@ -27,14 +27,20 @@ class TaskViewSet(APIView):
         return Response(serializer.errors, status=400)
 
     def put(self, request, pk):
-        task = Task.objects.get(pk=pk)
-        serializer = TaskSerializer(task, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=200)
-        return Response(serializer.errors, status=400)
+        try:
+            task = Task.objects.get(pk=pk)
+            serializer = TaskSerializer(task, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=200)
+            return Response(serializer.errors, status=400)
+        except Task.DoesNotExist:
+            return Response({'message': 'Task not found'}, status=404)
 
     def delete(self, request, pk):
-        task = Task.objects.get(pk=pk)
-        task.delete()
-        return Response(status=204)
+        try:
+            task = Task.objects.get(pk=pk)
+            task.delete()
+            return Response(status=204)
+        except Task.DoesNotExist:
+            return Response({'message': 'Task not found'}, status=404)

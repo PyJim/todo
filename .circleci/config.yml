@@ -1,0 +1,73 @@
+version: 2.1
+
+executors:
+  python-executor:
+    docker:
+      - image: cimg/python:3.12
+    working_directory: ~/repo
+
+  docker-executor:
+    docker:
+      - image: cimg/python:3.12
+      - image: docker:20.10.7 # Docker image for building and deploying
+    working_directory: ~/repo
+
+jobs:
+  pylint:
+    executor: python-executor
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies for linting
+          command: |
+            pip install -r requirements.txt
+            pip install pylint pylint-django
+      - run:
+          name: Run Pylint
+          command: pylint --load-plugins=pylint_django --django-settings-module=todo.settings --disable=missing-docstring tasks/*.py
+
+  test:
+    executor: python-executor
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies for tests
+          command: |
+            pip install -r requirements.txt
+      - run:
+          name: Run tests
+          command: python manage.py test
+
+  build:
+    executor: docker-executor
+    steps:
+      - checkout
+      - run:
+          name: Install Docker Compose
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y docker-compose
+      - run:
+          name: Build Docker images
+          command: docker-compose build
+
+  deploy:
+    executor: docker-executor
+    steps:
+      - checkout
+      - run:
+          name: Deploy using Docker Compose
+          command: docker-compose up -d
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - pylint
+      - test
+      - build:
+          requires:
+            - test
+      - deploy:
+          requires:
+            - build
