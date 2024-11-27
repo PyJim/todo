@@ -9,7 +9,7 @@ executors:
   docker-executor:
     docker:
       - image: cimg/python:3.12
-      - image: docker:20.10.7 # Docker image for building and deploying
+      - image: docker:20.10.7
     working_directory: ~/repo
 
 jobs:
@@ -27,13 +27,26 @@ jobs:
           command: pylint --load-plugins=pylint_django --django-settings-module=todo.settings --disable=missing-docstring tasks/*.py
 
   test:
-    executor: python-executor
+    executor: docker-executor
     steps:
       - checkout
       - run:
-          name: Install dependencies for tests
+          name: Start Services with Docker Compose
+          command: docker-compose up -d
+      - run:
+          name: Wait for Database to Be Ready
           command: |
-            pip install -r requirements.txt
+            until docker exec $(docker ps -qf "name=db") pg_isready -h localhost -p 5432 -q; do
+              echo "Waiting for database...";
+              sleep 1;
+            done
+            echo "Database is ready!";
+      - run:
+          name: Install dependencies for tests
+          command: pip install -r requirements.txt
+      - run:
+          name: Run migrations
+          command: python manage.py migrate
       - run:
           name: Run tests
           command: python manage.py test
