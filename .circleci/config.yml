@@ -46,7 +46,8 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            docker build -t kodwo/todoapi:1.0.0 .
+            docker build -t kodwoessel/todoapi:${CIRCLE_SHA1} .
+            docker build -t kodwoessel/todoapi:latest .
 
 
   deploy:
