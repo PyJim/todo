@@ -9,7 +9,7 @@ executors:
   docker-executor:
     docker:
       - image: cimg/python:3.12
-      - image: docker:20.10.7 # Docker image for building and deploying
+      - image: docker:20.10.7
     working_directory: ~/repo
 
 jobs:
@@ -43,21 +43,23 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install Docker Compose
+          name: Build Docker image
           command: |
-            sudo apt-get update
-            sudo apt-get install -y docker-compose
-      - run:
-          name: Build Docker images
-          command: docker-compose build
+            docker build -t kodwo/todoapi:1.0.0 .
+
 
   deploy:
     executor: docker-executor
     steps:
       - checkout
       - run:
-          name: Deploy using Docker Compose
-          command: docker-compose up -d
+          name: Log in to Docker Hub
+          command: |
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - run:
+          name: Push Docker image to Docker Hub
+          command: |
+            docker push kodwo/todoapi:1.0.0
 
 workflows:
   version: 2
