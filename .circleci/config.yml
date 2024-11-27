@@ -62,7 +62,7 @@ jobs:
       - run:
           name: Push Docker image to Docker Hub
           command: |
-            docker push kodwo/todoapi:${CIRCLE_SHA1}
+            docker push kodwo/todoapi:latest
 
 workflows:
   version: 2
