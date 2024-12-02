@@ -25,9 +25,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-na15cr+=8vg+&rxpuh07bwpk87k0ddze9qly$)8n)qql7p7&#y'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG')
+# DEBUG = os.getenv('DEBUG')
+DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -41,16 +42,39 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'tasks',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+]
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+
+CSRF_ALLOWED_ORIGINS = [
+    'http://localhost:5173'
+]
+
+
+CSRF_ALLOWED_METHODS = [
+    'POST',
+    'GET',
+    'DELETE',
+    'PUT',
+    'PATCH',
+    'OPTIONS',
 ]
 
 ROOT_URLCONF = 'todo.urls'
@@ -77,26 +101,26 @@ WSGI_APPLICATION = 'todo.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
 
 TESTING = 'test' in sys.argv
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql' if not TESTING else 'django.db.backends.sqlite3',
-        'NAME': os.getenv('DB_NAME') if not TESTING else BASE_DIR / 'test_db.sqlite3',
-        'USER': os.getenv('DB_USER', 'test_user'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'test_password'),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
-        'PORT': os.getenv('DB_PORT', '5432'),
-        'OPTIONS': {'sslmode': 'disable'} if not TESTING else {},
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql' if not TESTING else 'django.db.backends.sqlite3',
+#         'NAME': os.getenv('DB_NAME') if not TESTING else BASE_DIR / 'test_db.sqlite3',
+#         'USER': os.getenv('DB_USER', 'test_user'),
+#         'PASSWORD': os.getenv('DB_PASSWORD', 'test_password'),
+#         'HOST': os.getenv('DB_HOST', 'localhost'),
+#         'PORT': os.getenv('DB_PORT', '5432'),
+#         'OPTIONS': {'sslmode': 'disable'} if not TESTING else {},
+#     }
+# }
 
 
 

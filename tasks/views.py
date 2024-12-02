@@ -41,6 +41,6 @@ class TaskViewSet(APIView):
         try:
             task = Task.objects.get(pk=pk)
             task.delete()
-            return Response(status=204)
+            return Response({'message': 'Task deleted'}, status=200)
         except Task.DoesNotExist:
             return Response({'message': 'Task not found'}, status=404)
