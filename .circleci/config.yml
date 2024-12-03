@@ -19,7 +19,7 @@ jobs:
       - checkout
       - run:
           name: Check Branch Name
-          command: ../check_branch_name.sh
+          command: ./check_branch_name.sh
 
   check_commit_message:
     executor: python-executor
@@ -27,7 +27,7 @@ jobs:
       - checkout
       - run:
           name: Check Commit Message Format
-          command: ../check_commit_message.sh
+          command: ./check_commit_message.sh
 
   pylint:
     executor: python-executor
