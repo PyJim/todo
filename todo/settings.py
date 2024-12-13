@@ -110,18 +110,17 @@ DATABASES = {
 
 TESTING = 'test' in sys.argv
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql' if not TESTING else 'django.db.backends.sqlite3',
-#         'NAME': os.getenv('DB_NAME') if not TESTING else BASE_DIR / 'test_db.sqlite3',
-#         'USER': os.getenv('DB_USER', 'test_user'),
-#         'PASSWORD': os.getenv('DB_PASSWORD', 'test_password'),
-#         'HOST': os.getenv('DB_HOST', 'localhost'),
-#         'PORT': os.getenv('DB_PORT', '5432'),
-#         'OPTIONS': {'sslmode': 'disable'} if not TESTING else {},
-#     }
-# }
-
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql' if not TESTING else 'django.db.backends.sqlite3',
+        'NAME': os.getenv('DB_NAME') if not TESTING else BASE_DIR / 'test_db.sqlite3',
+        'USER': os.getenv('DB_USER', 'test_user'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'test_password'),
+        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'PORT': os.getenv('DB_PORT', '5432'),
+        'OPTIONS': {'sslmode': 'disable'} if not TESTING else {},
+    }
+}
 
 
 # Password validation
